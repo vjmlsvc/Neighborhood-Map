@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Neighbourhood Map</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css"></li>
+</head>
+<body>
+	<section class="container">
+		<div class="sidebar">
+			<div id="filter-input">
+				<input class="search-field" placeholder="Filter..." data-bind="value: filter, hasFocus: true">
+			</div>
+			<div class="menu" data-bind="foreach: places">
+				<div class="menu-entry" data-bind="text: title, visible: visible, style: {background: highlight()? 'red': 'white'}"></div>
+			</div>
+		</div>
+
+		<div class="map" id="map"></div>
+	</section>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="js/knockout-3.4.2.js"></script>
+	<script src="js/viewmodel.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=initMap"></script>
+</body>
+</html>

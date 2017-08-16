@@ -1,0 +1,33 @@
+html, body {
+	font-family: Arial, sans-serif;
+	height: 100%;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.menu-entry {
+}
+
+.container {
+	width: 100%;
+	height: 100%;
+}
+
+.sidebar {
+	padding: 5px;
+	width: 180px;
+	float: left;
+}
+
+.search-field {
+	width: 176px;
+}
+
+.menu {
+	padding: 5px;
+}
+
+.map {
+	margin-left: 180px;
+	height: 100%;
+}
