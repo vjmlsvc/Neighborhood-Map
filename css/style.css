@@ -1,11 +1,8 @@
 html, body {
-	font-family: Arial, sans-serif;
+	font-family: Tahoma, sans-serif;
 	height: 100%;
 	margin: 0;
 	box-sizing: border-box;
-}
-
-.menu-entry {
 }
 
 .container {
@@ -13,21 +10,60 @@ html, body {
 	height: 100%;
 }
 
+.map {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
 .sidebar {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	background: #fff;
 	padding: 5px;
-	width: 180px;
+	width: 200px;
 	float: left;
+	z-index: 1;
+	border: 1px solid #777;
+	border-width: 1px;
+	border-radius: 6px;
+	-webkit-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.2);
 }
 
 .search-field {
-	width: 176px;
+	width: 173px;
+}
+
+.hamburger, .hide-hamburger {
+	background: none;
+	position: absolute;
+	top: 4px;
+	left: 184px;
+	padding: 0;
+	border: 0;
+	outline: none;
+	line-height: 25px;
+	font-size: 1.6em;
+}
+
+.hamburger {
+	color: #000;
+}
+
+.hide-hamburger {
+	color: #aaa;
 }
 
 .menu {
 	padding: 5px;
 }
 
-.map {
-	margin-left: 180px;
-	height: 100%;
+.menu-entry {
+	padding: 2px 10px;
+	border-radius: 4px;
 }

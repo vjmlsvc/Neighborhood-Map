@@ -11,8 +11,22 @@
 			<div id="filter-input">
 				<input class="search-field" placeholder="Filter..." data-bind="value: filter, hasFocus: true">
 			</div>
+			<button class="hamburger">&#9776;</button>
+			<button class="hide-hamburger">&#9776;</button>
 			<div class="menu" data-bind="foreach: places">
-				<div class="menu-entry" data-bind="text: title, visible: visible, style: {background: highlight()? 'red': 'white'}"></div>
+				<div class="menu-entry" data-bind="
+					text: name,
+					visible: visible,
+					style: {
+						background: focused()? '#dfb': 'initial'},
+					event: {
+						mouseover: function(data) {
+							google.maps.event.trigger(model.markers[data.id], 'mouseover')},
+						mouseout: function(data) {
+							google.maps.event.trigger(model.markers[data.id], 'mouseout')},
+						click: function(data) {
+							google.maps.event.trigger(model.markers[data.id], 'click')}}">
+				</div>
 			</div>
 		</div>
 
@@ -21,6 +35,6 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script src="js/knockout-3.4.2.js"></script>
 	<script src="js/viewmodel.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=initMap"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=view.initMap"></script>
 </body>
 </html>
