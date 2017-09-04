@@ -1,19 +1,8 @@
-// handles the hamburger menu behaviour
-$(document).ready(function() {
-	$(".hamburger").hide();
-	$(".hide-hamburger").click(function() {
-		$(".menu").hide(100, function() {
-			$(".hide-hamburger").hide();
-			$(".hamburger").show();
-		});
-	});
-	$(".hamburger").click(function() {
-		$(".menu").show(100, function() {
-			$(".hamburger").hide();
-			$(".hide-hamburger").show();
-		});
-	});
+// handles hamburger menu behaviour
+$(".hamburger").click(function() {
+	$(".menu").toggle();
 });
+
 
 var model = {
 	// handles the filter and updates visibility of
@@ -38,8 +27,8 @@ var model = {
 
 	// icons to be used for markers
 	icons: {
-		default: 'img/marker-purple.png',
-		highlight: 'img/marker-blue.png',
+		default: "img/marker-purple.png",
+		highlight: "img/marker-blue.png",
 	},
 
 	// list of places including name, description of location, type of food,
@@ -130,7 +119,7 @@ var model = {
 
 	// array that will hold all infowindow contents once loaded
 	infoWindowContent: []
-}
+};
 
 var view = {
 	map: null,
@@ -139,7 +128,7 @@ var view = {
 	// and listeners for opening, closing, and mousing over markers
 	initMap: function() {
 		// creates the map with a limited maximum zoom and hidden UI
-		map = new google.maps.Map(document.getElementById('map'), {
+		map = new google.maps.Map(document.getElementById("map"), {
 			disableDefaultUI: true,
 			maxZoom: 18
 		});
@@ -161,23 +150,26 @@ var view = {
 			});
 			model.markers.push(marker);
 
-			// adds listeners to a marker for mouse-over and click
-			// changing the icon and opening the infowindow respectively
-			marker.addListener('mouseover', function() {
-				model.places[this.id].focused(true);
-				this.setIcon(model.icons.highlight);
-			});
-			marker.addListener('mouseout', function() {
-				model.places[this.id].focused(false);
-				this.setIcon(model.icons.default);
-			});
-			marker.addListener('click', function() {
-				view.fillInfoWindow(this, infoWindow);
-			});
+			// adds listeners to markers for mouse-over and click events
+			marker.addListener("mouseover", view.highlightToggle.bind(this, marker));
+			marker.addListener("mouseout", view.highlightToggle.bind(this, marker));
+			marker.addListener("click", view.fillInfoWindow.bind(this, marker, infoWindow));
 		}
 
 		// calls updateMap to handle setting bounds
 		view.updateMap();
+	},
+
+	// changes the highlighting of passed marker based on current state by
+	// toggling the focused property of relevant place and toggling the icon
+	highlightToggle: function(marker) {
+		if (model.places[marker.id].focused()) {
+			model.places[marker.id].focused(false);
+			marker.setIcon(model.icons.default);
+		} else {
+			model.places[marker.id].focused(true);
+			marker.setIcon(model.icons.highlight);
+		}
 	},
 
 	// populates the infoWindow with fourSquare and hardcoded data
@@ -185,7 +177,7 @@ var view = {
 		var fourSquareRequest = view.fourSquare(model.places[marker.id]);
 		// if data has been retrieved previously loads it
 		if (model.infoWindowContent[marker.id])
-			infowindow.setContent(model.infoWindowContent[marker.id])
+			infowindow.setContent(model.infoWindowContent[marker.id]);
 
 		// if current marker's infowindow data hasn't been retrieved
 		// makes an ajax request for it while displaying a progress
@@ -203,7 +195,9 @@ var view = {
 				content += "Likes: " + info.likes.count + "<br>";
 				content += "<img src=" + info.bestPhoto.prefix + "160x160" +
 					info.bestPhoto.suffix + "><br>";
-				content += "Data from FourSquare";
+				content += "<a class='link' target='_blank'" +
+					" href=http://foursquare.com/v/" + info.id +
+					">powered by FourSquare</a>";
 
 				model.infoWindowContent[marker.id] = content;
 				infowindow.setContent(content);
@@ -218,11 +212,11 @@ var view = {
 		infowindow.open(map, marker);
 
 		// closes infoWindow when the close button is clicked
-		infowindow.addListener('closeclick', function() {
+		infowindow.addListener("closeclick", function() {
 			infowindow.close();
 		});
 		// closes infoWindow when the map is clicked
-		google.maps.event.addListener(map, 'click', function() {
+		google.maps.event.addListener(map, "click", function() {
 			infowindow.close();
 		});
 	},
@@ -251,7 +245,7 @@ var view = {
 		}
 		if (!bounds.isEmpty()) map.fitBounds(bounds);
 	}
-}
+};
 
 // let there be light
 ko.applyBindings(new model.initPlaces());

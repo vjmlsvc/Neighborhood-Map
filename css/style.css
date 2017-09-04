@@ -5,6 +5,14 @@ html, body {
 	box-sizing: border-box;
 }
 
+.link {
+	color: inherit;
+	background: #ddf;
+	text-decoration: none;
+	padding: 0 5px;
+	border-radius: 4px;
+}
+
 .container {
 	width: 100%;
 	height: 100%;
@@ -20,8 +28,8 @@ html, body {
 
 .sidebar {
 	position: absolute;
-	top: 5px;
-	left: 5px;
+	top: 10px;
+	left: 10px;
 	background: #fff;
 	padding: 5px;
 	width: 200px;
@@ -39,7 +47,8 @@ html, body {
 	width: 173px;
 }
 
-.hamburger, .hide-hamburger {
+.hamburger {
+	color: #777;
 	background: none;
 	position: absolute;
 	top: 4px;
@@ -49,14 +58,6 @@ html, body {
 	outline: none;
 	line-height: 25px;
 	font-size: 1.6em;
-}
-
-.hamburger {
-	color: #000;
-}
-
-.hide-hamburger {
-	color: #aaa;
 }
 
 .menu {
