@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" name="viewport" content="width=device-width">
 	<title>Neighbourhood Map</title>
-	<link rel="stylesheet" type="text/css" href="css/style.css"></li>
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 	<section class="container">
-		<div class="sidebar">
+		<aside class="sidebar">
 			<div id="filter-input">
 				<input class="search-field" placeholder="Filter..." data-bind="value: filter, hasFocus: true">
 			</div>
-			<button class="hamburger">☰</button>
-			<div class="menu" data-bind="foreach: places">
+			<button data-bind="click: view.hamburger" class="hamburger">☰</button>
+			<div class="menu" data-bind="foreach: places, visible: menuVisibility()">
 				<div class="menu-entry" data-bind="
 					text: name,
 					visible: visible,
@@ -27,13 +27,16 @@
 							google.maps.event.trigger(model.markers[data.id], 'click')}}">
 				</div>
 			</div>
-		</div>
+		</aside>
 
-		<div class="map" id="map"></div>
+		<main class="map" id="map">
+			<span class="loading-message">Loading Google Map...</span>
+		</main>
 	</section>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script src="js/knockout-3.4.2.js"></script>
+	<script src="js/places.js"></script>
 	<script src="js/viewmodel.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=view.initMap"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=view.initMap" onerror="view.mapError()"></script>
 </body>
 </html>

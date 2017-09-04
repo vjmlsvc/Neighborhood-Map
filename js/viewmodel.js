@@ -1,15 +1,10 @@
-// handles hamburger menu behaviour
-$(".hamburger").click(function() {
-	$(".menu").toggle();
-});
-
-
 var model = {
 	// handles the filter and updates visibility of
 	// places based on it
 	initPlaces: function() {
 		var self = this;
 		self.filter = ko.observable("");
+		self.menuVisibility = ko.observable(true);
 
 		self.places = ko.computed(function() {
 			var string;
@@ -17,10 +12,10 @@ var model = {
 			// iterates through all places and checks for instance
 			// of self.filter, then sets visibility of each place based
 			// on its presence
-			for (var i = 0; i < model.places.length; i++) {
-				string = model.places[i].name.toLowerCase();
-				model.places[i].visible(string.indexOf(query) != -1);
-			} return model.places;
+			for (var i = 0; i < places.length; i++) {
+				string = places[i].name.toLowerCase();
+				places[i].visible(string.indexOf(query) != -1);
+			} return places;
 		}, self);
 		self.places.subscribe(function(){view.updateMap();});
 	},
@@ -30,89 +25,6 @@ var model = {
 		default: "img/marker-purple.png",
 		highlight: "img/marker-blue.png",
 	},
-
-	// list of places including name, description of location, type of food,
-	// and location latitude/longitude
-	places: [
-		{
-			id: 0,
-			name: "Al Posto Giusto",
-			description: "Located on the waterfront in Porto Montenegro, Tivat",
-			style: "Mediterranean, Italian",
-			location: {
-				lat: 42.43269,
-				lng: 18.6936
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "4e3e83637d8b0e96107798c0"
-		},
-		{
-			id: 1,
-			name: "Bokeski Gusti",
-			description: "Located on the waterfront in Prcanj",
-			style: "Mediterranean, Seafood",
-			location: {
-				lat: 42.460363,
-				lng: 18.73907
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "4d6baafe8fe6a1439d7cf7a3"
-		},
-		{
-			id: 2,
-			name: "Cesarica",
-			description: "Located near the Saint Nicholas Church in old Kotor",
-			style: "Mediterranean, Seafood",
-			location: {
-				lat: 42.4252768,
-				lng: 18.770902
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "4e1f2d761f6ee970647ab437"
-		},
-		{
-			id: 3,
-			name: "Conte Hotel Restaurant",
-			description: "Located on the waterfront in Perast",
-			style: "Mediterannean, Seafood",
-			location: {
-				lat: 42.4861,
-				lng: 18.6983
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "4c0573ea761ac9b64b8a1f74"
-		},
-		{
-			id: 4,
-			name: "Forza Cafe",
-			description: "Located within the city walls near the main entrance to old Kotor",
-			style: "Cafe, Desserts",
-			location: {
-				lat: 42.42495,
-				lng: 18.7699
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "4e16d378fa76a474496eed94"
-		},
-		{
-			id: 5,
-			name: "The Square Pub",
-			description: "Located accross from Saint Tryphon's Cathedral in old Kotor",
-			style: "Mediterranean",
-			location: {
-				lat: 42.4241655,
-				lng: 18.770965
-			},
-			visible: ko.observable(true),
-			focused: ko.observable(false),
-			fourSquareID: "56feda66498e42bee87bd6a4"
-		}
-	],
 
 	// array that will hold all markers
 	markers: [],
@@ -124,6 +36,7 @@ var model = {
 var view = {
 	map: null,
 	bounds: null,
+	prevMarker: null,
 	// initializes the map, creates the infoWindow and marker objects,
 	// and listeners for opening, closing, and mousing over markers
 	initMap: function() {
@@ -140,11 +53,11 @@ var view = {
 
 		// creates markers from all entries in places setting the
 		// name, id, position, and default icon
-		for (var i = 0; i < model.places.length; i++) {
+		for (var i = 0; i < places.length; i++) {
 			var marker = new google.maps.Marker({
-				title: model.places[i].name,
+				title: places[i].name,
 				id: i,
-				position: model.places[i].location,
+				position: places[i].location,
 				icon: model.icons.default,
 				map: map
 			});
@@ -153,28 +66,47 @@ var view = {
 			// adds listeners to markers for mouse-over and click events
 			marker.addListener("mouseover", view.highlightToggle.bind(this, marker));
 			marker.addListener("mouseout", view.highlightToggle.bind(this, marker));
-			marker.addListener("click", view.fillInfoWindow.bind(this, marker, infoWindow));
+			marker.addListener("click", view.clickToggle.bind(this, marker, infoWindow));
 		}
 
 		// calls updateMap to handle setting bounds
 		view.updateMap();
 	},
 
+	// handles hamburger menu behaviour
+	hamburger: function() {
+		this.menuVisibility(!this.menuVisibility());
+	},
+
+	// handles google map failing to load
+	mapError: function() {
+		alert("Google Maps API failed to load.");
+	},
+
 	// changes the highlighting of passed marker based on current state by
 	// toggling the focused property of relevant place and toggling the icon
 	highlightToggle: function(marker) {
-		if (model.places[marker.id].focused()) {
-			model.places[marker.id].focused(false);
+		if (places[marker.id].focused()) {
+			places[marker.id].focused(false);
 			marker.setIcon(model.icons.default);
 		} else {
-			model.places[marker.id].focused(true);
+			places[marker.id].focused(true);
 			marker.setIcon(model.icons.highlight);
 		}
 	},
 
 	// populates the infoWindow with fourSquare and hardcoded data
-	fillInfoWindow: function(marker, infowindow) {
-		var fourSquareRequest = view.fourSquare(model.places[marker.id]);
+	clickToggle: function(marker, infowindow) {
+		// tracks previously clicked marker to turn off animation as needed
+		if (view.prevMarker && view.prevMarker != marker)
+			view.prevMarker.setAnimation(null);
+		view.prevMarker = marker;
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+
+		// centers map on clicked marker
+		map.panTo(marker.getPosition());
+
+		var fourSquareRequest = view.fourSquare(places[marker.id]);
 		// if data has been retrieved previously loads it
 		if (model.infoWindowContent[marker.id])
 			infowindow.setContent(model.infoWindowContent[marker.id]);
@@ -215,8 +147,10 @@ var view = {
 		infowindow.addListener("closeclick", function() {
 			infowindow.close();
 		});
+
 		// closes infoWindow when the map is clicked
 		google.maps.event.addListener(map, "click", function() {
+			view.prevMarker.setAnimation(null);
 			infowindow.close();
 		});
 	},
@@ -237,11 +171,11 @@ var view = {
 	updateMap: function() {
 		bounds = new google.maps.LatLngBounds();
 		// sets bounds based on visibility of markers
-		for (var i = 0; i < model.places.length; i++) {
-			if (model.places[i].visible()) {
-				model.markers[i].setMap(map);
-				bounds.extend(model.places[i].location);
-			} else model.markers[i].setMap(null);
+		for (var i = 0; i < places.length; i++) {
+			if (places[i].visible()) {
+				model.markers[i].setVisible(true);
+				bounds.extend(places[i].location);
+			} else model.markers[i].setVisible(false);
 		}
 		if (!bounds.isEmpty()) map.fitBounds(bounds);
 	}
