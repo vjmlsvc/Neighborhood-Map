@@ -116,28 +116,33 @@ var view = {
 		// message
 		else {
 			infowindow.setContent("Fetching data from FourSquare...");
-			$.ajax(fourSquareRequest)
-			.done(function(data) {
-				var info = data.response.venue;
-				var content = "";
-				content += marker.title + "<br>";
-				if (info.contact.formattedPhone)
-					content += info.contact.formattedPhone + "<br>";
-				content += "Prices: " + info.price.message + "<br>";
-				content += "Likes: " + info.likes.count + "<br>";
-				content += "<img src=" + info.bestPhoto.prefix + "160x160" +
-					info.bestPhoto.suffix + "><br>";
-				content += "<a class='link' target='_blank'" +
-					" href=http://foursquare.com/v/" + info.id +
-					">powered by FourSquare</a>";
+			$.ajax(fourSquareRequest).done(function(data) {
+				if (data.meta.code == 200) {
+					var info = data.response.venue;
+					var content = "";
+					content += marker.title + "<br>";
+					content += info.contact.formattedPhone?
+						info.contact.formattedPhone + "<br>": "";
+					content += info.price?
+						"Prices: " + info.price.message + "<br>": "";
+					content += info.likes?
+						"Likes: " + info.likes.count + "<br>": "";
+					content += info.bestPhoto?
+						"<img src=" + info.bestPhoto.prefix + "160x160" +
+						info.bestPhoto.suffix + "><br>": "";
+					content += "<a class='link' target='_blank'" +
+						" href=http://foursquare.com/v/" + info.id +
+						">powered by FourSquare</a>";
 
-				model.infoWindowContent[marker.id] = content;
-				infowindow.setContent(content);
-			})
+					model.infoWindowContent[marker.id] = content;
+					infowindow.setContent(content);
+				} else {
+					infowindow.setContent("Failed to retreive data from FourSquare...");
+				}
 			// if the ajax request failed for any reason notifies the user
 			// about what's missing
-			.fail(infowindow.setContent("Failed to retreive data from FourSquare."));
-		}
+			});
+		};
 
 		// opens infowindow
 		infowindow.marker = marker;
