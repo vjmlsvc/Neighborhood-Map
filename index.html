@@ -9,7 +9,7 @@
 	<section class="container">
 		<aside class="sidebar">
 			<div id="filter-input">
-				<input class="search-field" placeholder="Filter..." data-bind="value: filter, hasFocus: true">
+				<input class="search-field" placeholder="Filter..." data-bind="value: filter, hasFocus: true, valueUpdate: 'keyup'">
 			</div>
 			<button data-bind="click: view.hamburger" class="hamburger">☰</button>
 			<div class="menu" data-bind="foreach: places, visible: menuVisibility()">
@@ -37,6 +37,6 @@
 	<script src="js/knockout-3.4.2.js"></script>
 	<script src="js/places.js"></script>
 	<script src="js/viewmodel.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=view.initMap" onerror="view.mapError()"></script>
+	<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKgmtfYbPmPRkEGo8jk3p-KkRWfKdZKVo&v=3&callback=view.initMap" onerror="view.mapError()"></script>
 </body>
 </html>
